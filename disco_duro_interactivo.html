@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama Interactivo de Disco Duro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .hdd-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .hdd-diagram {
+            flex: 1;
+            min-width: 400px;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .component {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .component:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .component-label {
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .info-panel {
+            flex: 1;
+            min-width: 300px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .info-panel h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .info-panel p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .info-panel .default-text {
+            color: #999;
+            font-style: italic;
+        }
+
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .legend h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .legend-item:hover {
+            background: #e0e0e0;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 15px;
+            border: 2px solid #333;
+        }
+
+        @media (max-width: 768px) {
+            .hdd-container {
+                flex-direction: column;
+            }
+
+            .hdd-diagram {
+                min-width: 100%;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖴 Diagrama Interactivo de Disco Duro (HDD)</h1>
+
+        <div class="hdd-container">
+            <div class="hdd-diagram">
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Carcasa exterior -->
+                    <rect x="20" y="20" width="460" height="360" rx="10" 
+                          fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+
+                    <!-- Platos (Platters) -->
+                    <g class="component" data-component="platters">
+                        <ellipse cx="180" cy="200" rx="90" ry="85" fill="#34495e" stroke="#2c3e50" stroke-width="2"/>
+                        <ellipse cx="180" cy="190" rx="90" ry="85" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+                        <ellipse cx="180" cy="180" rx="90" ry="85" fill="#95a5a6" stroke="#2c3e50" stroke-width="2"/>
+
+                        <!-- Detalles de pistas -->
+                        <ellipse cx="180" cy="180" rx="75" ry="70" fill="none" stroke="#2c3e50" stroke-width="1" opacity="0.3"/>
+                        <ellipse cx="180" cy="180" rx="60" ry="55" fill="none" stroke="#2c3e50" stroke-width="1" opacity="0.3"/>
+                        <ellipse cx="180" cy="180" rx="45" ry="40" fill="none" stroke="#2c3e50" stroke-width="1" opacity="0.3"/>
+
+                        <!-- Centro del spindle -->
+                        <circle cx="180" cy="180" r="20" fill="#2c3e50" stroke="#1a252f" stroke-width="2"/>
+                        <circle cx="180" cy="180" r="12" fill="#ecf0f1"/>
+                    </g>
+
+                    <!-- Motor del spindle -->
+                    <g class="component" data-component="spindle">
+                        <rect x="155" y="270" width="50" height="60" rx="5" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+                        <rect x="160" y="285" width="40" height="10" fill="#c0392b"/>
+                        <text x="180" y="308" text-anchor="middle" fill="white" font-size="10" font-weight="bold">RPM</text>
+                    </g>
+
+                    <!-- Brazo actuador -->
+                    <g class="component" data-component="actuator-arm">
+                        <path d="M 280 200 L 190 170 L 195 165 L 285 195 Z" 
+                              fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                        <path d="M 280 200 L 190 190 L 195 185 L 285 205 Z" 
+                              fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                        <path d="M 280 200 L 190 210 L 195 205 L 285 215 Z" 
+                              fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                    </g>
+
+                    <!-- Cabezales de lectura/escritura -->
+                    <g class="component" data-component="read-write-heads">
+                        <rect x="180" y="163" width="15" height="8" rx="2" fill="#f39c12" stroke="#d68910" stroke-width="1"/>
+                        <rect x="180" y="183" width="15" height="8" rx="2" fill="#f39c12" stroke="#d68910" stroke-width="1"/>
+                        <rect x="180" y="203" width="15" height="8" rx="2" fill="#f39c12" stroke="#d68910" stroke-width="1"/>
+                    </g>
+
+                    <!-- Motor del actuador (Voice Coil) -->
+                    <g class="component" data-component="voice-coil">
+                        <rect x="280" y="170" width="50" height="60" rx="5" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+                        <circle cx="305" cy="200" r="15" fill="#8e44ad"/>
+                        <circle cx="305" cy="200" r="10" fill="#ecf0f1"/>
+                        <text x="305" y="250" text-anchor="middle" fill="white" font-size="9" font-weight="bold">VCM</text>
+                    </g>
+
+                    <!-- Placa controladora (PCB) -->
+                    <g class="component" data-component="pcb">
+                        <rect x="350" y="50" width="110" height="80" rx="5" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+                        <rect x="360" y="60" width="20" height="15" fill="#229954"/>
+                        <rect x="385" y="60" width="20" height="15" fill="#229954"/>
+                        <rect x="410" y="60" width="20" height="15" fill="#229954"/>
+                        <rect x="435" y="60" width="15" height="15" fill="#229954"/>
+
+                        <rect x="360" y="85" width="20" height="15" fill="#229954"/>
+                        <rect x="385" y="85" width="35" height="15" fill="#229954"/>
+                        <rect x="425" y="85" width="25" height="15" fill="#229954"/>
+
+                        <text x="405" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="bold">PCB</text>
+                    </g>
+
+                    <!-- Conector SATA -->
+                    <g class="component" data-component="connector">
+                        <rect x="350" y="150" width="110" height="30" rx="3" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
+                        <rect x="360" y="157" width="25" height="16" fill="#d35400"/>
+                        <rect x="390" y="157" width="60" height="16" fill="#d35400"/>
+                        <text x="405" y="195" text-anchor="middle" fill="white" font-size="10" font-weight="bold">SATA</text>
+                    </g>
+
+                    <!-- Cable flex -->
+                    <path d="M 330 200 Q 340 140, 350 100" 
+                          stroke="#95a5a6" stroke-width="4" fill="none" opacity="0.7"/>
+
+                    <!-- Filtro de aire -->
+                    <g class="component" data-component="air-filter">
+                        <rect x="40" y="40" width="40" height="30" rx="3" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="2"/>
+                        <line x1="45" y1="50" x2="75" y2="50" stroke="#7f8c8d" stroke-width="1"/>
+                        <line x1="45" y1="55" x2="75" y2="55" stroke="#7f8c8d" stroke-width="1"/>
+                        <line x1="45" y1="60" x2="75" y2="60" stroke="#7f8c8d" stroke-width="1"/>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="info-panel">
+                <h2 id="component-title">Componentes del Disco Duro</h2>
+                <p id="component-description" class="default-text">
+                    Pasa el cursor sobre los componentes del diagrama o haz clic en la leyenda para conocer más información sobre cada parte del disco duro.
+                </p>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>Leyenda de Componentes</h3>
+            <div class="legend-item" data-component="platters">
+                <div class="legend-color" style="background: #95a5a6;"></div>
+                <span><strong>Platos (Platters)</strong></span>
+            </div>
+            <div class="legend-item" data-component="spindle">
+                <div class="legend-color" style="background: #e74c3c;"></div>
+                <span><strong>Motor del Spindle</strong></span>
+            </div>
+            <div class="legend-item" data-component="actuator-arm">
+                <div class="legend-color" style="background: #3498db;"></div>
+                <span><strong>Brazo Actuador</strong></span>
+            </div>
+            <div class="legend-item" data-component="read-write-heads">
+                <div class="legend-color" style="background: #f39c12;"></div>
+                <span><strong>Cabezales de Lectura/Escritura</strong></span>
+            </div>
+            <div class="legend-item" data-component="voice-coil">
+                <div class="legend-color" style="background: #9b59b6;"></div>
+                <span><strong>Motor Voice Coil (VCM)</strong></span>
+            </div>
+            <div class="legend-item" data-component="pcb">
+                <div class="legend-color" style="background: #27ae60;"></div>
+                <span><strong>Placa Controladora (PCB)</strong></span>
+            </div>
+            <div class="legend-item" data-component="connector">
+                <div class="legend-color" style="background: #e67e22;"></div>
+                <span><strong>Conector SATA</strong></span>
+            </div>
+            <div class="legend-item" data-component="air-filter">
+                <div class="legend-color" style="background: #bdc3c7;"></div>
+                <span><strong>Filtro de Aire</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Información detallada de cada componente
+        const componentInfo = {
+            'platters': {
+                title: 'Platos (Platters)',
+                description: 'Los platos son discos rígidos fabricados de aluminio, vidrio o cerámica, recubiertos con material magnético. Aquí se almacenan todos los datos del disco duro. Cada plato tiene dos caras utilizables y giran a velocidades de 5,400 a 15,000 RPM. La superficie está dividida en miles de millones de sectores donde se graban los bits de información magnéticamente.'
+            },
+            'spindle': {
+                title: 'Motor del Spindle',
+                description: 'El motor del spindle hace girar los platos a una velocidad constante y precisa, medida en RPM (revoluciones por minuto). Debe proporcionar potencia de giro estable y confiable durante muchas horas de uso continuo. La velocidad del spindle afecta directamente el rendimiento del disco, especialmente en las tasas de transferencia de datos.'
+            },
+            'actuator-arm': {
+                title: 'Brazo Actuador',
+                description: 'El brazo actuador sostiene los cabezales de lectura/escritura y los mueve a través de los platos giratorios. Se mueve en forma de arco para cubrir todas las áreas disponibles de almacenamiento. Hay un brazo para cada lado de cada plato, y todos se mueven como una unidad sincronizada. Su precisión es crítica para el correcto funcionamiento del disco.'
+            },
+            'read-write-heads': {
+                title: 'Cabezales de Lectura/Escritura',
+                description: 'Los cabezales son pequeños imanes ubicados en el extremo de cada brazo actuador. Leen y escriben datos en las superficies magnéticas de los platos. No tocan los platos durante la operación normal; flotan sobre un colchón de aire a menos de 5 nanómetros de distancia. Cada superficie de plato tiene su propio cabezal dedicado.'
+            },
+            'voice-coil': {
+                title: 'Motor Voice Coil (VCM)',
+                description: 'El Motor Voice Coil es un electroimán que controla el movimiento del brazo actuador. Similar a las bobinas móviles en altavoces, usa magnetos y bobinas con resortes para mover los brazos con extrema precisión y velocidad. Este diseño reemplazó a los motores paso a paso antiguos, siendo más rápido, preciso y menos sensible a variaciones de temperatura.'
+            },
+            'pcb': {
+                title: 'Placa Controladora (PCB)',
+                description: 'La placa de circuito impreso (PCB) se ubica en la parte posterior del disco duro y actúa como el cerebro de la unidad. Controla todo el proceso de lectura y escritura, gestiona el flujo de datos entre el disco y la computadora, controla el movimiento del actuador, y asegura la integridad de los datos almacenados. Incluye el firmware y los circuitos de control.'
+            },
+            'connector': {
+                title: 'Conector SATA/Alimentación',
+                description: 'Los conectores enlazan el disco duro a la placa base del ordenador. El conector SATA maneja la transferencia de datos a velocidades de hasta 6 Gb/s (SATA III), mientras que el conector de alimentación suministra la energía necesaria para que el motor y la electrónica funcionen. Las versiones antiguas usaban conectores IDE/PATA.'
+            },
+            'air-filter': {
+                title: 'Filtro de Aire',
+                description: 'El filtro de aire mantiene el interior del disco duro limpio de partículas de polvo. Aunque el disco está sellado, no es hermético al vacío; permite la ecualización de presión. El filtro previene que contaminantes entren y causen daños, ya que incluso una partícula microscópica podría causar una colisión entre el cabezal y el plato (head crash).'
+            }
+        };
+
+        // Elementos del DOM
+        const componentTitle = document.getElementById('component-title');
+        const componentDescription = document.getElementById('component-description');
+        const components = document.querySelectorAll('.component');
+        const legendItems = document.querySelectorAll('.legend-item');
+
+        // Función para actualizar el panel de información
+        function updateInfo(componentKey) {
+            const info = componentInfo[componentKey];
+            if (info) {
+                componentTitle.textContent = info.title;
+                componentDescription.textContent = info.description;
+                componentDescription.classList.remove('default-text');
+            }
+        }
+
+        // Event listeners para los componentes SVG
+        components.forEach(component => {
+            component.addEventListener('click', (e) => {
+                const componentKey = e.currentTarget.getAttribute('data-component');
+                updateInfo(componentKey);
+            });
+
+            component.addEventListener('mouseenter', (e) => {
+                const componentKey = e.currentTarget.getAttribute('data-component');
+                updateInfo(componentKey);
+            });
+        });
+
+        // Event listeners para los items de la leyenda
+        legendItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const componentKey = e.currentTarget.getAttribute('data-component');
+                updateInfo(componentKey);
+
+                // Highlight del componente correspondiente en el SVG
+                const svgComponent = document.querySelector(`.component[data-component="${componentKey}"]`);
+                if (svgComponent) {
+                    // Remover highlight previo
+                    components.forEach(c => c.style.opacity = '1');
+
+                    // Aplicar highlight temporal
+                    svgComponent.style.opacity = '0.7';
+                    setTimeout(() => {
+                        svgComponent.style.opacity = '1';
+                    }, 500);
+                }
+            });
+        });
+
+        // Animación de rotación para los platos
+        let rotation = 0;
+        function animatePlatters() {
+            rotation += 0.5;
+            const platters = document.querySelector('.component[data-component="platters"]');
+            if (platters) {
+                platters.style.transformOrigin = '180px 180px';
+                platters.style.transform = `rotate(${rotation}deg)`;
+            }
+            requestAnimationFrame(animatePlatters);
+        }
+        animatePlatters();
+    </script>
+</body>
+</html>
